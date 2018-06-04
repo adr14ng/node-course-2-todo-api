@@ -8,8 +8,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client) => {
   console.log('Connected to MongoDB server');
   const db = client.db('TodoApp');
 
-  // db.collection('Todos').find({
-  //   _id: new ObjectID('5b1562570dbb600740da8ba5')
+  // db.collection('Users').find({
+  //   _id: new ObjectID("5b15bc50f3e69b123374bee4")
   // }).toArray().then((docs) => {
   //   console.log('Todos');
   //   console.log(JSON.stringify(docs, undefined, 2));
@@ -24,14 +24,14 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (err, client) => {
   //   console.log('Unable to fetch todos', err);
   // });
 
-  db.collection('Users').find({
-    name: 'Adrian'
-  }).toArray().then((docs) => {
-    console.log('Todos');
-    console.log(JSON.stringify(docs, undefined, 2));
-  }, (err) => {
-    console.log('Unable to fetch todos', err);
-  });
+  // db.collection('Users').find({
+  //   name: 'Adrian'
+  // }).toArray().then((docs) => {
+  //   console.log('Todos');
+  //   console.log(JSON.stringify(docs, undefined, 2));
+  // }, (err) => {
+  //   console.log('Unable to fetch todos', err);
+  // });
 
-  //client.close();
+  client.close();
 });
