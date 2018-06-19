@@ -10,7 +10,7 @@ const {todos, populateTodos, users, populateUsers} = require('./seed/seed');
 beforeEach(populateUsers);
 beforeEach(populateTodos);
 
-describe('POST/todos', () => {
+describe('POST /todos', () => {
   it('Should POST todos', (done) => {
     var text = 'Test todo text';
 
@@ -171,7 +171,7 @@ describe('PATCH /todos/:id', () => {
   });
 });
 
-describe('GET users/me', () => {
+describe('GET /users/me', () => {
   it('Should return user if authenticated', (done) => {
     request(app)
       .get('/users/me')
@@ -244,7 +244,7 @@ describe('POST /users', () => {
   });
 });
 
-describe('POST users/login', () => {
+describe('POST /users/login', () => {
   it('Should login user and return auth token', (done) => {
     var email = users[1].email;
     var password = users[1].password;
@@ -286,6 +286,27 @@ describe('POST users/login', () => {
           return done(error);
         }
       User.findById(users[1]._id).then((user) => {
+        expect(user.tokens.length).toBe(0);
+        done();
+      }).catch((error) => done(error));
+    });
+  });
+
+});
+
+describe('DELETE /users/me/token', () => {
+
+  it('Should remove Auth token on logout', (done) => {
+
+    request(app)
+      .delete('/users/me/token')
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+    .end((error, res) => {
+      if(error){
+        return done(error);
+      }
+      User.findById(users[0]._id).then((user) => {
         expect(user.tokens.length).toBe(0);
         done();
       }).catch((error) => done(error));
