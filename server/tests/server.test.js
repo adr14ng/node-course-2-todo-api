@@ -217,7 +217,7 @@ describe('POST /users', () => {
           expect(user).toBeTruthy();
           expect(user.password).not.toBe(password);
           done();
-        })
+        }).catch((error) => done(error));
       });
   });
 
@@ -242,4 +242,54 @@ describe('POST /users', () => {
       .expect(400)
       .end(done);
   });
+});
+
+describe('POST users/login', () => {
+  it('Should login user and return auth token', (done) => {
+    var email = users[1].email;
+    var password = users[1].password;
+
+    request(app)
+      .post('/users/login')
+      .send({email, password})
+      .expect(200)
+      .expect((res) => {
+        expect(res.headers['x-auth']).toBeTruthy();
+        expect(res.body.email).toBe(email);
+      })
+    .end((error, res) => {
+      if(error){
+        return done(error);
+      }
+
+      User.findById(users[1]._id).then((user) => {
+        expect(user.tokens[0].access).toBe('auth');
+        expect(user.tokens[0].token).toBe(res.headers['x-auth']);
+        done();
+    }).catch((error) => done(error));
+  });
+});
+
+  it('Should reject invalid login', (done) => {
+    var email = users[1].email;
+    var password = 'beavis';
+
+    request(app)
+      .post('/users/login')
+      .send({email, password})
+      .expect(400)
+      .expect((res) => {
+        expect(res.headers['x-auth']).toBeFalsy();
+      })
+      .end((error, res) => {
+        if(error){
+          return done(error);
+        }
+      User.findById(users[1]._id).then((user) => {
+        expect(user.tokens.length).toBe(0);
+        done();
+      }).catch((error) => done(error));
+    });
+  });
+
 });
